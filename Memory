@@ -1,0 +1,54 @@
+from gtts import gTTS
+import PySimpleGUI as sim
+import os 
+from PyDictionary import PyDictionary
+Next = False
+Text = "A"
+language = 'en'
+webdic = PyDictionary()
+layouts=[[sim.Combo(['English','Spanish', 'French', 'Chinese', 'Tawanise','Brazilian'])], 
+        [sim.Text('Input the text you wish read allowed'), sim.InputText()],[sim.Button('Next')],
+          [sim.Button('Cancel')]]
+window = sim.Window(title ="Welcome to Text to Audio",layout=layouts, margins=(100,50))
+while True:
+    event,values = window.read()
+    Text = values[1]
+    if event == sim.WIN_CLOSED or event == 'Cancel':
+          print("Broken")
+          break
+    if event == 'Next': 
+        Next = True
+        break
+    if values[0] == 'English':
+        language = 'en'
+    elif values[0] == 'Spanish':
+        language = 'es'
+    elif values[0] == 'French':
+        language = 'fr'
+    elif values[0] == 'Tawamise':
+        language = 'zh-TW' 
+    elif values[0] == 'Chinese':
+        language = 'zh-CN'  
+    elif values[0] == 'Brazilian':
+        language = 'pt' 
+window.close()
+if (Next == True):
+        audiotext = gTTS(text = Text, lang = language, slow = False)
+        audiotext.save("New_Text.mp3")
+        os.system("New_Text.mp3")
+        
+        window = sim.Window(title = "Definitions of Words", layout= [[sim.Text('Any Word Need of defining?'),sim.InputText()], [sim.Button('Define')],[sim.Button('Close')]],margins=(100,50))
+        while True:
+            event,values = window.read()
+            if event == sim.WIN_CLOSED or event == 'Close':
+                break
+            if event == 'Define':
+                Text = values[0] 
+                Dicttext = str(webdic.meaning(Text))
+                audiotext = gTTS(text = Dicttext, lang = language, slow = False)
+                audiotext.save("Dict_Text.mp3")
+                os.system("Dict_Text.mp3") 
+window.close()
+os.remove("New_Text.mp3")
+os.remove("Dict_Text.mp3")
+            
